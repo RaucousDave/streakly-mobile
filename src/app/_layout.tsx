@@ -1,16 +1,16 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { ForceUpdateModal } from '@/components/feedback/force-update-modal';
-import { ToastProvider } from '@/components/ui/toast';
-import { AuthProvider, useAuth } from '@/contexts/auth-context';
-import { useAppFonts } from '@/hooks/use-app-fonts';
-import { useTheme } from '@/hooks/use-theme';
+import { ForceUpdateModal } from "@/components/feedback/force-update-modal";
+import { ToastProvider } from "@/components/ui/toast";
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
+import { useAppFonts } from "@/hooks/use-app-fonts";
+import { ThemePreferenceProvider, useTheme } from "@/hooks/use-theme";
 
 void SplashScreen.preventAutoHideAsync().catch(() => {
   // The splash screen may already be hidden during a fast refresh.
@@ -34,12 +34,12 @@ function RootNavigator() {
   const { loaded } = useAppFonts();
 
   useEffect(() => {
-    if (loaded && status !== 'loading') {
+    if (loaded && status !== "loading") {
       void SplashScreen.hideAsync().catch(() => {});
     }
   }, [loaded, status]);
 
-  if (!loaded || status === 'loading') {
+  if (!loaded || status === "loading") {
     return <View style={{ flex: 1, backgroundColor: colors.background }} />;
   }
 
@@ -59,27 +59,31 @@ function RootNavigator() {
 
   return (
     <ThemeProvider value={navigationTheme}>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <StatusBar style={isDark ? "light" : "dark"} />
       <Stack
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: colors.background },
-          animation: 'slide_from_right',
-        }}>
-        <Stack.Protected guard={status === 'signedIn'} redirectTo="/(auth)/sign-in">
+          animation: "slide_from_right",
+        }}
+      >
+        <Stack.Protected
+          guard={status === "signedIn"}
+          redirectTo="/(auth)/sign-in"
+        >
           <Stack.Screen name="(tabs)" />
           <Stack.Screen
             name="habit/new"
-            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+            options={{ presentation: "modal", animation: "slide_from_bottom" }}
           />
           <Stack.Screen name="habit/[id]" />
         </Stack.Protected>
 
-        <Stack.Protected guard={status === 'signedOut'} redirectTo="/(tabs)">
+        <Stack.Protected guard={status === "signedOut"} redirectTo="/(tabs)">
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
 
-        <Stack.Screen name="+not-found" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="+not-found" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>
   );
@@ -93,8 +97,10 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
           <AuthProvider>
-            <RootNavigator />
-            <ForceUpdateModal />
+            <ThemePreferenceProvider>
+              <RootNavigator />
+              <ForceUpdateModal />
+            </ThemePreferenceProvider>
           </AuthProvider>
         </ToastProvider>
       </QueryClientProvider>
