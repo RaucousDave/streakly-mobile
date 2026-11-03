@@ -1,115 +1,114 @@
+import { Ionicons } from '@expo/vector-icons';
 import {
-  Tabs,
   TabList,
-  TabTrigger,
   TabSlot,
-  TabTriggerSlotProps,
-  TabListProps,
+  TabTrigger,
+  Tabs,
+  type TabListProps,
+  type TabTriggerSlotProps,
 } from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
-import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+import { Layout, Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
+import { Text } from '@/components/ui/text';
 
-import { ExternalLink } from './external-link';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
-
+/**
+ * The browser preview gets the same three destinations in a bottom bar so the
+ * layout matches the phone rather than becoming a desktop sidebar.
+ */
 export default function AppTabs() {
   return (
     <Tabs>
-      <TabSlot style={{ height: '100%' }} />
+      <TabSlot style={styles.slot} />
       <TabList asChild>
-        <CustomTabList>
-          <TabTrigger name="home" href="/" asChild>
-            <TabButton>Home</TabButton>
+        <TabBar>
+          <TabTrigger name="today" href="/" asChild>
+            <TabButton icon="today" label="Today" />
           </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
+          <TabTrigger name="streaks" href="/streaks" asChild>
+            <TabButton icon="flame" label="Streaks" />
           </TabTrigger>
-        </CustomTabList>
+          <TabTrigger name="profile" href="/profile" asChild>
+            <TabButton icon="person" label="Profile" />
+          </TabTrigger>
+        </TabBar>
       </TabList>
     </Tabs>
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
-  return (
-    <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView
-        type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
-          {children}
-        </ThemedText>
-      </ThemedView>
-    </Pressable>
-  );
-}
-
-export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+function TabBar(props: TabListProps) {
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View {...props} style={styles.tabListContainer}>
-      <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
-        </ThemedText>
-
-        {props.children}
-
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
-      </ThemedView>
+    <View
+      {...props}
+      style={[
+        styles.bar,
+        {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          paddingBottom: Math.max(insets.bottom, Spacing.three),
+        },
+      ]}>
+      <View style={styles.barInner}>{props.children}</View>
     </View>
   );
 }
 
+type TabButtonProps = TabTriggerSlotProps & {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+};
+
+function TabButton({ icon, label, isFocused, onPress, onLongPress }: TabButtonProps) {
+  const { colors } = useTheme();
+
+  return (
+    <Pressable
+      accessibilityRole="tab"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: isFocused }}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      style={({ pressed }) => [styles.tab, { opacity: pressed ? 0.65 : 1 }]}>
+      <Ionicons
+        name={isFocused ? icon : (`${icon}-outline` as keyof typeof Ionicons.glyphMap)}
+        size={21}
+        color={isFocused ? colors.accent : colors.textMuted}
+      />
+      <Text variant="micro" color={isFocused ? 'accent' : 'textMuted'}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  tabListContainer: {
-    position: 'absolute',
+  slot: {
+    height: '100%',
+  },
+  bar: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: Spacing.two,
+    paddingHorizontal: Spacing.four,
+    alignItems: 'center',
+  },
+  barInner: {
     width: '100%',
-    padding: Spacing.three,
+    maxWidth: Layout.maxContentWidth,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  tab: {
+    flex: 1,
+    minHeight: Layout.hitTarget,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  innerContainer: {
-    paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.five,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexGrow: 1,
-    gap: Spacing.two,
-    maxWidth: MaxContentWidth,
-  },
-  brandText: {
-    marginRight: 'auto',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  tabButtonView: {
+    gap: 2,
     paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
-  },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Spacing.one,
-    marginLeft: Spacing.three,
   },
 });

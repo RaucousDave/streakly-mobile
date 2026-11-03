@@ -1,16 +1,17 @@
-import { http, unwrap } from '@/api/client';
-import { normalizeHabit, normalizeHabits } from '@/api/normalize';
-import type { CreateHabitInput, Habit } from '@/types/habit';
+import { http, unwrap } from "@/api/client";
+import { normalizeHabit, normalizeHabits } from "@/api/normalize";
+import type { CreateHabitInput, Habit } from "@/types/habit";
 
-export { spendFreeze as freezeHabit } from '@/api/freeze.api';
+export { spendFreeze as freezeHabit } from "@/api/freeze.api";
 
 export async function listHabits(): Promise<Habit[]> {
-  const response = await http.get('/habits');
+  const response = await http.get("/habits");
+  console.log("Habits response list: ", response);
   return normalizeHabits(unwrap<unknown>(response.data));
 }
 
 export async function createHabit(input: CreateHabitInput): Promise<Habit> {
-  const response = await http.post('/habits', input);
+  const response = await http.post("/habits", input);
   return normalizeHabit(unwrap<unknown>(response.data));
 }
 

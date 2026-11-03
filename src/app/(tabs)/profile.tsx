@@ -1,25 +1,25 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
-import { Linking, Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { Linking, Pressable, StyleSheet, Switch, View } from "react-native";
 
-import { APP_VERSION } from '@/constants/config';
-import { BrandMark } from '@/components/ui/brand-mark';
-import { Button } from '@/components/ui/button';
-import { Screen } from '@/components/ui/screen';
-import { SectionHeader } from '@/components/ui/section-header';
-import { Hairline } from '@/components/ui/state-block';
-import { Text } from '@/components/ui/text';
-import { Radius, Spacing } from '@/constants/theme';
-import { useAuth } from '@/contexts/auth-context';
-import { useOfflineSyncContext } from '@/contexts/offline-context';
-import { useAppConfig } from '@/hooks/use-app-config';
-import { useDashboard } from '@/hooks/use-dashboard';
-import { useReminders } from '@/hooks/use-reminders';
-import { useTheme } from '@/hooks/use-theme';
-import { timeZoneLabel } from '@/utils/timezone';
+import { APP_VERSION } from "@/constants/config";
+import { BrandMark } from "@/components/ui/brand-mark";
+import { Button } from "@/components/ui/button";
+import { Screen } from "@/components/ui/screen";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Hairline } from "@/components/ui/state-block";
+import { Text } from "@/components/ui/text";
+import { Radius, Spacing } from "@/constants/theme";
+import { useAuth } from "@/contexts/auth-context";
+import { useOfflineSyncContext } from "@/contexts/offline-context";
+import { useAppConfig } from "@/hooks/use-app-config";
+import { useDashboard } from "@/hooks/use-dashboard";
+import { useReminders } from "@/hooks/use-reminders";
+import * as useTheme from "@/hooks/use-theme";
+import { timeZoneLabel } from "@/utils/timezone";
 
 export default function ProfileScreen() {
-  const { colors, isDark, toggleDarkMode } = useTheme();
+  const { colors, isDark, toggleDarkMode } = useTheme.useTheme();
   const { user, signOut } = useAuth();
   const { data } = useDashboard();
   const { data: config } = useAppConfig();
@@ -28,9 +28,10 @@ export default function ProfileScreen() {
   const [confirming, setConfirming] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
-  const displayName = data?.user.display_name || user?.display_name || 'You';
-  const initial = displayName.trim().charAt(0).toUpperCase() || 'S';
-  const provider = user?.provider === 'GOOGLE' ? 'Google account' : 'Email account';
+  const displayName = data?.user.display_name || user?.display_name || "You";
+  const initial = displayName.trim().charAt(0).toUpperCase() || "S";
+  const provider =
+    user?.provider === "GOOGLE" ? "Google account" : "Email account";
 
   const leave = async () => {
     setSigningOut(true);
@@ -68,14 +69,27 @@ export default function ProfileScreen() {
             accessibilityLabel="Dark mode"
             value={isDark}
             onValueChange={toggleDarkMode}
-            trackColor={{ false: colors.surfaceSunken, true: colors.accentSoft }}
+            trackColor={{
+              false: colors.surfaceSunken,
+              true: colors.accentSoft,
+            }}
             thumbColor={isDark ? colors.accent : colors.textFaint}
           />
         </View>
       </View>
 
-      <View style={[styles.identity, { borderColor: colors.border, backgroundColor: colors.surface }]}>
-        <View style={[styles.avatar, { backgroundColor: colors.accentSoft, borderColor: colors.accent }]}>
+      <View
+        style={[
+          styles.identity,
+          { borderColor: colors.border, backgroundColor: colors.surface },
+        ]}
+      >
+        <View
+          style={[
+            styles.avatar,
+            { backgroundColor: colors.accentSoft, borderColor: colors.accent },
+          ]}
+        >
           <Text variant="h1" color="accent">
             {initial}
           </Text>
@@ -89,7 +103,8 @@ export default function ProfileScreen() {
             {user?.email || provider}
           </Text>
           <Text variant="micro" color="textFaint">
-            {provider} · {timeZoneLabel(data?.user.timezone || user?.time_zone || 'UTC')}
+            {provider} ·{" "}
+            {timeZoneLabel(data?.user.timezone || user?.time_zone || "UTC")}
           </Text>
         </View>
       </View>
@@ -126,7 +141,10 @@ export default function ProfileScreen() {
             value={reminders.enabled}
             onValueChange={() => void reminders.toggle()}
             disabled={reminders.busy}
-            trackColor={{ false: colors.surfaceSunken, true: colors.accentSoft }}
+            trackColor={{
+              false: colors.surfaceSunken,
+              true: colors.accentSoft,
+            }}
             thumbColor={reminders.enabled ? colors.accent : colors.textFaint}
           />
         </View>
@@ -147,10 +165,13 @@ export default function ProfileScreen() {
         <View style={styles.row}>
           <View style={styles.rowCopy}>
             <Text variant="bodyStrong">
-              {pending === 0 ? 'Everything is synced' : `${pending} check-in${pending === 1 ? '' : 's'} waiting`}
+              {pending === 0
+                ? "Everything is synced"
+                : `${pending} check-in${pending === 1 ? "" : "s"} waiting`}
             </Text>
             <Text variant="meta" color="textMuted">
-              Check-ins are written to this phone first, then replayed to the server.
+              Check-ins are written to this phone first, then replayed to the
+              server.
             </Text>
           </View>
 
@@ -163,12 +184,20 @@ export default function ProfileScreen() {
               onPress={() => void flush()}
               style={({ pressed }) => [
                 styles.syncButton,
-                { borderColor: colors.borderStrong, opacity: syncing ? 0.5 : pressed ? 0.6 : 1 },
-              ]}>
+                {
+                  borderColor: colors.borderStrong,
+                  opacity: syncing ? 0.5 : pressed ? 0.6 : 1,
+                },
+              ]}
+            >
               <Ionicons name="sync" size={18} color={colors.text} />
             </Pressable>
           ) : (
-            <Ionicons name="checkmark-circle" size={22} color={colors.positive} />
+            <Ionicons
+              name="checkmark-circle"
+              size={22}
+              color={colors.positive}
+            />
           )}
         </View>
       </View>
@@ -179,14 +208,19 @@ export default function ProfileScreen() {
           <Pressable
             accessibilityRole="link"
             accessibilityLabel="Open the update page"
-            onPress={() => void Linking.openURL(config.update_url).catch(() => {})}
+            onPress={() =>
+              void Linking.openURL(config.update_url).catch(() => {})
+            }
             style={({ pressed }) => [
               styles.card,
               styles.row,
               { borderColor: colors.border, opacity: pressed ? 0.7 : 1 },
-            ]}>
+            ]}
+          >
             <View style={styles.rowCopy}>
-              <Text variant="bodyStrong">Version {config.latest_version} is available</Text>
+              <Text variant="bodyStrong">
+                Version {config.latest_version} is available
+              </Text>
               <Text variant="meta" color="textMuted">
                 You are on {APP_VERSION}. Tap to update.
               </Text>
@@ -210,20 +244,35 @@ export default function ProfileScreen() {
         <View style={[styles.card, { borderColor: colors.danger }]}>
           <Text variant="bodyStrong">Sign out of Streakly?</Text>
           <Text variant="meta" color="textMuted">
-            Queued check-ins stay on this phone until they sync. Signing out clears the local
-            ledger copy.
+            Queued check-ins stay on this phone until they sync. Signing out
+            clears the local ledger copy.
           </Text>
           <View style={styles.confirmRow}>
-            <Button label="Cancel" variant="secondary" onPress={() => setConfirming(false)} />
-            <Button label="Sign out" variant="danger" loading={signingOut} onPress={leave} />
+            <Button
+              label="Cancel"
+              variant="secondary"
+              onPress={() => setConfirming(false)}
+            />
+            <Button
+              label="Sign out"
+              variant="danger"
+              loading={signingOut}
+              onPress={leave}
+            />
           </View>
         </View>
       ) : (
-        <Button label="Sign out" variant="danger" fullWidth onPress={() => setConfirming(true)} />
+        <Button
+          label="Sign out"
+          variant="danger"
+          fullWidth
+          onPress={() => setConfirming(true)}
+        />
       )}
 
       <Text variant="meta" color="textFaint" align="center">
-        Streakly keeps the minimum visible, because that is the part that has to survive a bad day.
+        Streakly keeps the minimum visible, because that is the part that has to
+        survive a bad day.
       </Text>
     </Screen>
   );
@@ -247,8 +296,8 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   identity: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.four,
     borderWidth: 1,
     borderRadius: Radius.card,
@@ -259,22 +308,22 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: Radius.pill,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   identityCopy: {
     flex: 1,
     gap: Spacing.one,
   },
   stats: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderWidth: 1,
     borderRadius: Radius.card,
     paddingVertical: Spacing.four,
   },
   stat: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing.one,
   },
   statRule: {
@@ -288,8 +337,8 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.four,
   },
   rowCopy: {
@@ -301,22 +350,22 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: Radius.control,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     gap: Spacing.four,
   },
   infoValue: {
     flexShrink: 1,
-    textAlign: 'right',
+    textAlign: "right",
   },
   confirmRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     gap: Spacing.three,
     marginTop: Spacing.one,
   },

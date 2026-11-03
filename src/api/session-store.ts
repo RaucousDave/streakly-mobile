@@ -51,7 +51,17 @@ export const session = {
 
     accessToken = access;
     refreshToken = refresh;
-    currentUser = user ? (JSON.parse(user) as AuthUser) : null;
+    if (user) {
+      try {
+        currentUser = JSON.parse(user) as AuthUser;
+      } catch {
+        // A stale or manually edited browser value must not prevent boot.
+        currentUser = null;
+        kv.remove(StorageKeys.sessionUser);
+      }
+    } else {
+      currentUser = null;
+    }
     hydrated = true;
     notify();
   },

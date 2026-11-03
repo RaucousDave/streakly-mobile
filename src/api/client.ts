@@ -1,10 +1,10 @@
-import axios, { AxiosError, type AxiosRequestConfig } from 'axios';
+import axios, { create, isAxiosError, type AxiosError, type AxiosRequestConfig } from 'axios';
 
 import { API_BASE_URL } from '@/constants/config';
 import { session } from '@/api/session-store';
 import { ApiError, type ApiEnvelope } from '@/types/api';
 
-export const http = axios.create({
+export const http = create({
   baseURL: API_BASE_URL,
   timeout: 15_000,
   headers: { 'Content-Type': 'application/json' },
@@ -95,7 +95,7 @@ export function toApiError(error: unknown): ApiError {
     return error;
   }
 
-  if (axios.isAxiosError(error)) {
+  if (isAxiosError(error)) {
     if (error.code === 'ECONNABORTED') {
       return ApiError.timeout();
     }
@@ -124,3 +124,4 @@ export function toApiError(error: unknown): ApiError {
 export function errorMessage(error: unknown): string {
   return toApiError(error).message;
 }
+
