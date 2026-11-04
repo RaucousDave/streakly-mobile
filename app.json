@@ -4,7 +4,7 @@
     "slug": "streakly",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/adaptive-foreground.png",
     "scheme": "streakly",
     "userInterfaceStyle": "automatic",
     "ios": {
