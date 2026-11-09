@@ -17,6 +17,7 @@ import { useDashboard } from "@/hooks/use-dashboard";
 import { useReminders } from "@/hooks/use-reminders";
 import * as useTheme from "@/hooks/use-theme";
 import { timeZoneLabel } from "@/utils/timezone";
+import { router } from "expo-router";
 
 export default function ProfileScreen() {
   const { colors, isDark, toggleDarkMode } = useTheme.useTheme();
@@ -231,6 +232,19 @@ export default function ProfileScreen() {
       ) : null}
 
       <SectionHeader title="About" />
+
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel="Open archived habits"
+        onPress={() => router.push("/archived")}
+        style={({ pressed }) => [styles.card, styles.row, { borderColor: colors.border, opacity: pressed ? 0.7 : 1 }]}
+      >
+        <View style={styles.rowCopy}>
+          <Text variant="bodyStrong">Archived habits</Text>
+          <Text variant="meta" color="textMuted">Keep old routines close without putting them on today&apos;s ledger.</Text>
+        </View>
+        <Ionicons name="archive-outline" size={19} color={colors.accent} />
+      </Pressable>
 
       <View style={[styles.card, { borderColor: colors.border }]}>
         <InfoRow label="Version" value={APP_VERSION} />

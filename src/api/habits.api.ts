@@ -10,6 +10,11 @@ export async function listHabits(): Promise<Habit[]> {
   return normalizeHabits(unwrap<unknown>(response.data));
 }
 
+export async function listArchivedHabits(): Promise<Habit[]> {
+  const response = await http.get("/habits/archived");
+  return normalizeHabits(unwrap<unknown>(response.data));
+}
+
 export async function createHabit(input: CreateHabitInput): Promise<Habit> {
   const response = await http.post("/habits", input);
   return normalizeHabit(unwrap<unknown>(response.data));

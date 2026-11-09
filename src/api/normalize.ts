@@ -52,6 +52,7 @@ export function normalizeHabit(raw: unknown): Habit {
     mvt_qty: pick<number>(source, 'mvt_qty', 'MvtQty', 'mvtqty') ?? null,
     unit: pick<string>(source, 'unit', 'Unit') ?? null,
     is_archived: pick<boolean>(source, 'is_archived', 'IsArchived') ?? false,
+    archived_at: pick<string>(source, 'archived_at', 'ArchivedAt') ?? null,
   };
 }
 

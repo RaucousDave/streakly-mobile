@@ -11,6 +11,8 @@ export type Habit = {
   unit: string | null;
   is_archived?: boolean;
   created_at?: string;
+  archived_at?: string | null;
+  archived_at?: string | null;
 };
 
 export type HabitDashboardItem = {
